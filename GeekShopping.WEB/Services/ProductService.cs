@@ -44,9 +44,12 @@ namespace GeekShopping.WEB.Services
             return await response.ReadContentAs<ProductModel>();
         }
 
-        public Task<bool> Delete(long id)
+        public async Task<bool> Delete(long id)
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.DeleteAsync($"{BasePath}/{id}");
+            if (response.IsSuccessStatusCode)
+                return true;
+            else throw new Exception("Something went wrong when calling API");
         }
     }
 }
