@@ -1,5 +1,7 @@
 ﻿using GeekShopping.ProductAPI.Data.DTO_s;
 using GeekShopping.ProductAPI.Repository;
+using GeekShopping.ProductAPI.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeekShopping.ProductAPI.Controllers
@@ -17,6 +19,7 @@ namespace GeekShopping.ProductAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts()
         {
             var products = await _repository.GetProducts();
@@ -24,7 +27,8 @@ namespace GeekShopping.ProductAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductDTO>> GetById([FromRoute] long id)
+		[Authorize]
+		public async Task<ActionResult<ProductDTO>> GetById([FromRoute] long id)
         {
             var product = await _repository.GetById(id);
 
@@ -43,7 +47,8 @@ namespace GeekShopping.ProductAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<ProductDTO>> Update([FromBody] ProductDTO dto)
+		[Authorize]
+		public async Task<ActionResult<ProductDTO>> Update([FromBody] ProductDTO dto)
         {
             if(dto == null) return BadRequest();
 
@@ -52,7 +57,8 @@ namespace GeekShopping.ProductAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete([FromRoute] long id)
+		[Authorize(Roles = Role.Admin)]
+		public async Task<ActionResult> Delete([FromRoute] long id)
         {
             var status = await _repository.Delete(id);
 
