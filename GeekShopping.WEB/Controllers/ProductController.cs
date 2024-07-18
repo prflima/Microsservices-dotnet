@@ -1,6 +1,7 @@
 ﻿using GeekShopping.WEB.Models;
 using GeekShopping.WEB.Services.IServices;
 using GeekShopping.WEB.Utils;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,8 @@ namespace GeekShopping.WEB.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var products = await _productService.GetProducts();
+            var token = await HttpContext.GetTokenAsync("access_token");
+            var products = await _productService.GetProducts(token);
             return View(products);
         }
 
@@ -33,7 +35,8 @@ namespace GeekShopping.WEB.Controllers
         {
             if (ModelState.IsValid) 
             {
-                var response = await _productService.Create(model);
+                var token = await HttpContext.GetTokenAsync("access_token");
+                var response = await _productService.Create(model, token);
                 if (response != null) 
                     return RedirectToAction(nameof(Index));
             }
@@ -43,7 +46,8 @@ namespace GeekShopping.WEB.Controllers
 
         public async Task<IActionResult> ProductUpdate(long id)
         {
-            var product = await _productService.GetById(id);
+            var token = await HttpContext.GetTokenAsync("access_token");
+            var product = await _productService.GetById(id, token);
             if (product == null)
                 return NotFound();
 
@@ -56,7 +60,8 @@ namespace GeekShopping.WEB.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _productService.Update(model);
+                var token = await HttpContext.GetTokenAsync("access_token");
+                var response = await _productService.Update(model, token);
                 if (response != null)
                     return RedirectToAction(nameof(Index));
             }
@@ -68,7 +73,8 @@ namespace GeekShopping.WEB.Controllers
 		[Authorize(Roles = Role.Admin)]
 		public async Task<IActionResult> ProductDelete(long id)
         {
-            var response = await _productService.Delete(id);
+            var token = await HttpContext.GetTokenAsync("access_token");
+            var response = await _productService.Delete(id, token);
             if(response)
                 return RedirectToAction(nameof(Index));
 
