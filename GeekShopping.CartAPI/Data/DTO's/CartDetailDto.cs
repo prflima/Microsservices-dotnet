@@ -1,6 +1,4 @@
-﻿using GeekShopping.CartAPI.Model;
-
-namespace GeekShopping.CartAPI.Data;
+﻿namespace GeekShopping.CartAPI.Data;
 
 public class CartDetailDto
 {
